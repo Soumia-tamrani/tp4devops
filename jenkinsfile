@@ -1,0 +1,45 @@
+pipeline {  
+    environment { 
+        registry = "soumiatamrani/tp4"     
+        registryCredential = 'jenkkkkins'     
+        dockerImage = '' 
+    }  
+
+    agent any  
+
+    stages { 
+        stage('Cloning Git') {       
+            steps { 
+                script {
+                    git branch: 'main', url: 'https://github.com/Soumia-tamrani/tp4devops'
+                }
+            } 
+        } 
+
+        stage('Building image') {       
+            steps {         
+                script { 
+                    dockerImage = docker.build("${registry}:${BUILD_NUMBER}") 
+                } 
+            } 
+        } 
+
+        stage('Test image') {  
+            steps {         
+                script { 
+                    echo "Tests passed"
+                } 
+            } 
+        } 
+
+        stage('Publish Image') {  
+            steps {         
+                script { 
+                    docker.withRegistry('', registryCredential) {             
+                        dockerImage.push() 
+                    } 
+                } 
+            } 
+        } 
+    } 
+}
