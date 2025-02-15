@@ -34,17 +34,19 @@ pipeline {
                 script { 
                     docker.withRegistry('', registryCredential) { 
                         dockerImage.push()
+                        dockerImage.push('latest') // Optionnel : met à jour le tag latest
                     } 
                 } 
             } 
         } 
 
-        stage('Deploy image') {       
-            steps { 
+        stage('Deploy image') {
+            steps {
                 script {
-                    sh "docker run -d ${registry}:${BUILD_NUMBER}"
+                    echo "Deploying..."
+                    sh "docker run -d -p 80:80 ${registry}:${BUILD_NUMBER}"
                 }
-            } 
-        } 
+            }
+        }
     } 
 }
