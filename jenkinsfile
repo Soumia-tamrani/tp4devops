@@ -1,32 +1,50 @@
 pipeline {   
     environment { 
-    registry = "soumiatamrani/tp4"     registryCredential = 'jenkkkkins'     dockerImage = '' 
-  } 
-  agent any   stages { 
-    stage('Cloning Git') {       steps { 
-        git branch: 'main', url: 'https://github.com/Soumia-tamrani/tp4devops' 
-      } 
+        registry = "soumiatamrani/tp4"
+        registryCredential = 'jenkkkkins'
     } 
-    stage('Building image') {       steps{         script { 
-          dockerImage = docker.build registry + ":$BUILD_NUMBER" 
+
+    agent any   
+
+    stages { 
+        stage('Cloning Git') {       
+            steps { 
+                git branch: 'main', url: 'https://github.com/Soumia-tamrani/tp4devops' 
+            } 
         } 
-      } 
-    } 
-stage('Test image') { 
-        steps{         script { 
+
+        stage('Building image') {       
+            steps {         
+                script { 
+                    dockerImage = docker.build("${registry}:${BUILD_NUMBER}")
+                } 
+            } 
+        } 
+
+        stage('Test image') { 
+            steps {         
+                script { 
                     echo "Tests passed" 
+                } 
+            } 
         } 
-      } 
-    } 
-    stage('Publish Image') {       steps{         script { 
-          docker.withRegistry( '', registryCredential ) {             dockerImage.push() 
-          } 
+
+        stage('Publish Image') {       
+            steps {         
+                script { 
+                    docker.withRegistry('', registryCredential) { 
+                        dockerImage.push()
+                    } 
+                } 
+            } 
         } 
-      } 
+
+        stage('Deploy image') {       
+            steps { 
+                script {
+                    sh "docker run -d ${registry}:${BUILD_NUMBER}"
+                }
+            } 
+        } 
     } 
-        stage('Deploy image') {       steps{ 
-        bat "docker run -d $registry:$BUILD_NUMBER" 
-      } 
-    } 
-  } 
-} 
+}
