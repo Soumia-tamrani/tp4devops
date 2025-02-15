@@ -12,6 +12,7 @@ pipeline {
             steps { 
                 script {
                     git branch: 'main', url: 'https://github.com/Soumia-tamrani/tp4devops'
+
                 }
             } 
         } 
