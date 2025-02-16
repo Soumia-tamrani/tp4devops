@@ -44,7 +44,7 @@ pipeline {
             steps {
                 script {
                     echo "Deploying..."
-                    sh "docker run -d -p 80:80 ${registry}:${BUILD_NUMBER}"
+                    bat "docker run -d -p 80:80 ${registry}:${BUILD_NUMBER}"
                 }
             }
         }
